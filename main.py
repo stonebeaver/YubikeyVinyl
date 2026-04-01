@@ -7,7 +7,9 @@ pt = inch / 72
 
 ## parameters
 
-sheet_w = 305 * mm
+sheet_w = (
+    12 * inch - inch / 2
+)  # they claim that they would sell you 12 inches but never let you plot inside a qaurter margin border on both sides
 body_h = 31 * mm
 body_w = 16 * mm
 body_r = 1 * mm
@@ -15,8 +17,13 @@ keyhole_h = 27 * mm
 keyhole_d = sympy.Rational("5.5") * mm
 touchhole_h = 13 * mm
 touchhole_d = sympy.Rational("10.5") * mm
-margin_kiss_to_die = 2 * mm
+margin_kiss_to_die = sympy.Rational("1.5") * mm
 ε = mm / 100
+
+
+sheet_w = convert_to(
+    sheet_w, mm
+)  # optimizes calculation speed when we force that up front
 
 
 def q(quantity):
@@ -223,43 +230,46 @@ def main():
             f"{convert_to(W / mm, 1).evalf()}mm",
             f"{convert_to(H / mm, 1).evalf()}mm",
         ),
-        # viewBox=f"0 0 {(W / mm).evalf()} {(H / mm).evalf()}",
     )
     delta = 3 * margin_kiss_to_die + 2 * body_w
     sierra = 0 * mm
+    path = list()
     while sierra + delta <= sheet_w:
-        plot.add(
-            plot.path(
-                d=body(
-                    X=margin_kiss_to_die + sierra,
-                    Y=margin_kiss_to_die,
-                )
-                + keyhole(
-                    X=margin_kiss_to_die + body_w / 2 + sierra,
-                    Y=margin_kiss_to_die + keyhole_h,
-                )
-                + touchhole(
-                    X=margin_kiss_to_die + body_w / 2 + sierra,
-                    Y=margin_kiss_to_die + touchhole_h,
-                )
-                + body(
-                    X=body_w + 2 * margin_kiss_to_die + sierra,
-                    Y=margin_kiss_to_die,
-                )
-                + keyhole(
-                    X=2 * margin_kiss_to_die + 3 * body_w / 2 + sierra,
-                    Y=margin_kiss_to_die + keyhole_h,
-                )
-                + die_cut(X=sierra, Y=0),
-                fill="#808080",
-                fill_opacity=0.5,
-                stroke="black",
-                stroke_width=0.1,
+        path += (
+            body(
+                X=margin_kiss_to_die + sierra,
+                Y=margin_kiss_to_die,
             )
+            + keyhole(
+                X=margin_kiss_to_die + body_w / 2 + sierra,
+                Y=margin_kiss_to_die + keyhole_h,
+            )
+            + touchhole(
+                X=margin_kiss_to_die + body_w / 2 + sierra,
+                Y=margin_kiss_to_die + touchhole_h,
+            )
+            + body(
+                X=body_w + 2 * margin_kiss_to_die + sierra,
+                Y=margin_kiss_to_die,
+            )
+            + keyhole(
+                X=2 * margin_kiss_to_die + 3 * body_w / 2 + sierra,
+                Y=margin_kiss_to_die + keyhole_h,
+            )
+            + die_cut(X=sierra, Y=0)
         )
         sierra += delta
+    plot.add(
+        plot.path(
+            d=path,
+            fill="#808080",
+            fill_opacity=0.5,
+            stroke="black",
+            stroke_width=0.1,
+        )
+    )
     plot.save()
-    print(f"expected import size: {sierra} × {H}")
+    print(f"expected import size: {sierra.evalf()} × {H.evalf()}")
     return
 
 

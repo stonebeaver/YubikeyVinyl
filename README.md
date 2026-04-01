@@ -63,7 +63,7 @@ You used another device or material for you stickers? [Let us know!](https://git
 
 - stripe-type stickers ✅
 - wrap-type sticker
-- seamless columns
+- seamless columns ✅
 - seamless rows
 - end-user-friendly access to number of rows and columns
 - report more working materials
