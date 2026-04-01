@@ -162,61 +162,65 @@ def die_cut_half(X, Y):
     ]
 
 
-def die_cut(X, Y):
-    W = 2 * body_w + 3 * margin_kiss_to_die
+def die_cut_horizontal(X, Y):
+    return [
+        "M",
+        q(X),
+        q(Y + 0 * ε),
+        "L",
+        q(X + sheet_w),
+        q(Y + 0 * ε),
+        "L",
+        q(X + sheet_w),
+        q(Y + 1 * ε),
+        "L",
+        q(X),
+        q(Y + 1 * ε),
+        "z",
+        "M",
+        q(X),
+        q(Y + 2 * ε),
+        "L",
+        q(X + sheet_w),
+        q(Y + 2 * ε),
+        "L",
+        q(X + sheet_w),
+        q(Y + 3 * ε),
+        "L",
+        q(X),
+        q(Y + 3 * ε),
+        "z",
+    ]
+
+
+def die_cut_vertical(X, Y):
     H = body_h + 2 * margin_kiss_to_die
     return [
-        "M",  ################
+        "M",
         q(X + 0 * ε),
-        q(Y + 0 * ε),
+        q(Y + 5 * ε),
         "L",
         q(X + 0 * ε),
-        q(Y + H - 0 * ε),
-        "L",
-        q(X + W - 0 * ε),
-        q(Y + H - 0 * ε),
-        "L",
-        q(X + W - 0 * ε),
-        q(Y + 0 * ε),
-        "z",
-        "M",  ################
-        q(X + 1 * ε),
-        q(Y + 1 * ε),
-        "L",
-        q(X + W - 1 * ε),
-        q(Y + 1 * ε),
-        "L",
-        q(X + W - 1 * ε),
-        q(Y + H - 1 * ε),
+        q(Y + H),
         "L",
         q(X + 1 * ε),
-        q(Y + H - 1 * ε),
+        q(Y + H),
+        "L",
+        q(X + 1 * ε),
+        q(Y + 5 * ε),
         "z",
-        "M",  ################
+        "M",
         q(X + 2 * ε),
-        q(Y + 2 * ε),
+        q(Y + 5 * ε),
         "L",
         q(X + 2 * ε),
-        q(Y + H - 2 * ε),
-        "L",
-        q(X + W - 2 * ε),
-        q(Y + H - 2 * ε),
-        "L",
-        q(X + W - 2 * ε),
-        q(Y + 2 * ε),
-        "z",
-        "M",  ################
-        q(X + 3 * ε),
-        q(Y + 3 * ε),
-        "L",
-        q(X + W - 3 * ε),
-        q(Y + 3 * ε),
-        "L",
-        q(X + W - 3 * ε),
-        q(Y + H - 3 * ε),
+        q(Y + H),
         "L",
         q(X + 3 * ε),
-        q(Y + H - 3 * ε),
+        q(Y + H),
+        "L",
+        q(X + 3 * ε),
+        q(Y + 5 * ε),
         "z",
     ]
 
@@ -234,6 +238,7 @@ def main():
     delta = 3 * margin_kiss_to_die + 2 * body_w
     sierra = 0 * mm
     path = list()
+    path += die_cut_horizontal(X=0, Y=0)
     while sierra + delta <= sheet_w:
         path += (
             body(
@@ -256,9 +261,11 @@ def main():
                 X=2 * margin_kiss_to_die + 3 * body_w / 2 + sierra,
                 Y=margin_kiss_to_die + keyhole_h,
             )
-            + die_cut(X=sierra, Y=0)
+            + die_cut_vertical(X=sierra, Y=0)
         )
         sierra += delta
+    path += die_cut_vertical(X=sierra, Y=0)
+    path += die_cut_horizontal(X=0, Y=body_h + 2 * margin_kiss_to_die)
     plot.add(
         plot.path(
             d=path,
