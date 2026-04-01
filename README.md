@@ -17,7 +17,9 @@ Cut stickers for a more colorful appearance of your Yubikeys
 <table>
   <tr>
     <th >
-      Material ╲ Plotter
+       <div style="text-align:right;">Devices</div>
+        <div style="text-align:center;">╲</div>
+         <div style="text-align:left;">Materials</div>
     </th>
     <th style="writing-mode: vertical-rl; transform: rotate(180deg);">Cricut Maker 3<br/>w/ fine point blade</th>
   </tr>
@@ -31,7 +33,7 @@ Cut stickers for a more colorful appearance of your Yubikeys
   </tr>
 </table>
 
-You used another device or material for you stickers? Let us know!
+You used another device or material for you stickers? [Let us know!](https://github.com/stonebeaver/YubikeyVinyl/issues/new)
 
 
 ## Getting Started for Developers 🪚
@@ -66,4 +68,4 @@ You used another device or material for you stickers? Let us know!
 - end-user-friendly access to number of rows and columns
 - report more working materials
 - other devices?
-- \[room for your idea right here\]
+- [\[room for your idea right here\]](https://github.com/stonebeaver/YubikeyVinyl/issues/new)
