@@ -12,7 +12,7 @@ Cut stickers for a more colorful appearance of your Yubikeys
 5. Enjoy the dopamine
 
 
-### Compatibility Matrix 🧩
+## Compatibility Matrix 🧩
 
 <table>
   <tr>
