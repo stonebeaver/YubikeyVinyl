@@ -52,7 +52,7 @@ You used another device or material for you stickers? [Let us know!](https://git
 2. first run
     ```bash
     git clone https://github.com/stonebeaver/YubikeyVinyl.git
-    cd YubikeyVinyl.git
+    cd YubikeyVinyl
     pipenv install
     pipenv run python main.py
     ```
