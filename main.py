@@ -1,140 +1,266 @@
-import pint
-import re
 import svgwrite
+import sympy
+from sympy.physics.units import convert_to, inch, mm
 
+pt = inch / 72
 
-def q(quantity):
-    """adapts a pint unit to svgwrite"""
-    formatted_quantity = f"{quantity:~}"
-    clean_quantity = re.sub(
-        pattern=r"\s+",
-        repl="",
-        string=formatted_quantity,
-    )
-    return clean_quantity
-
-
-ureg = pint.UnitRegistry()
-mm = ureg.mm
 
 ## parameters
 
-sheet_w = 210 * mm
-body_h = 32 * mm
-body_w = 12 * mm
-body_r = 1.5 * mm
-keyhole_h = 28 * mm
-keyhole_d = 6 * mm
-touchhole_h = 14 * mm
-touchhole_d = 10.5 * mm
+sheet_w = 305 * mm
+body_h = 31 * mm
+body_w = 16 * mm
+body_r = 1 * mm
+keyhole_h = 27 * mm
+keyhole_d = sympy.Rational("5.5") * mm
+touchhole_h = 13 * mm
+touchhole_d = sympy.Rational("10.5") * mm
 margin_kiss_to_die = 2 * mm
+ε = mm / 100
+
+
+def q(quantity):
+    """adapts a sympy thingy to svgwrite"""
+    return convert_to(quantity / pt, 1).evalf()
+
+
+def body(X, Y):
+    return [
+        "M",
+        q(X + body_w / 2),
+        q(Y),
+        "l",
+        q(body_w / 2 - body_r),
+        0,
+        "a",
+        q(+body_r),
+        q(+body_r),
+        0,
+        0,
+        1,
+        q(body_r),
+        q(body_r),
+        "l",
+        0,
+        q(body_h - 2 * body_r),
+        "a",
+        q(body_r),
+        q(body_r),
+        0,
+        0,
+        1,
+        q(-body_r),
+        q(+body_r),
+        "l",
+        q(-(body_w - 2 * body_r)),
+        0,
+        "a",
+        q(body_r),
+        q(body_r),
+        0,
+        0,
+        1,
+        q(-body_r),
+        q(-body_r),
+        "l",
+        0,
+        q(-(body_h - 2 * body_r)),
+        "a",
+        q(body_r),
+        q(body_r),
+        0,
+        0,
+        1,
+        q(+body_r),
+        q(-body_r),
+        "z",
+    ]
+
+
+def keyhole(X, Y):
+    keyhole_r = keyhole_d / 2
+    return [
+        "M",
+        q(X + keyhole_r),
+        q(Y),
+        "a",
+        q(keyhole_r),
+        q(keyhole_r),
+        0,
+        0,
+        0,
+        q(-keyhole_d),
+        0,
+        "a",
+        q(keyhole_r),
+        q(keyhole_r),
+        0,
+        0,
+        0,
+        q(keyhole_d),
+        0,
+        "z",
+    ]
+
+
+def touchhole(X, Y):
+    touchhole_r = touchhole_d / 2
+    return [
+        "M",
+        q(X + touchhole_r),
+        q(Y),
+        "a",
+        q(touchhole_r),
+        q(touchhole_r),
+        0,
+        0,
+        0,
+        q(-touchhole_d),
+        0,
+        "a",
+        q(touchhole_r),
+        q(touchhole_r),
+        0,
+        0,
+        0,
+        q(touchhole_d),
+        0,
+        "z",
+    ]
+
+
+def die_cut_half(X, Y):
+    W = 2 * body_w + 3 * margin_kiss_to_die
+    H = body_h + 2 * margin_kiss_to_die
+    return [
+        "M",
+        q(W + X),
+        q(H),
+        "l",
+        q(-W),
+        0,
+        "l",
+        0,
+        q(-ε),
+        "l",
+        q(W - ε),
+        0,
+        "l",
+        0,
+        q(-H + ε),
+        "l",
+        q(ε),
+        0,
+        "z",
+    ]
+
+
+def die_cut(X, Y):
+    W = 2 * body_w + 3 * margin_kiss_to_die
+    H = body_h + 2 * margin_kiss_to_die
+    return [
+        "M",  ################
+        q(X + 0 * ε),
+        q(Y + 0 * ε),
+        "L",
+        q(X + 0 * ε),
+        q(Y + H - 0 * ε),
+        "L",
+        q(X + W - 0 * ε),
+        q(Y + H - 0 * ε),
+        "L",
+        q(X + W - 0 * ε),
+        q(Y + 0 * ε),
+        "z",
+        "M",  ################
+        q(X + 1 * ε),
+        q(Y + 1 * ε),
+        "L",
+        q(X + W - 1 * ε),
+        q(Y + 1 * ε),
+        "L",
+        q(X + W - 1 * ε),
+        q(Y + H - 1 * ε),
+        "L",
+        q(X + 1 * ε),
+        q(Y + H - 1 * ε),
+        "z",
+        "M",  ################
+        q(X + 2 * ε),
+        q(Y + 2 * ε),
+        "L",
+        q(X + 2 * ε),
+        q(Y + H - 2 * ε),
+        "L",
+        q(X + W - 2 * ε),
+        q(Y + H - 2 * ε),
+        "L",
+        q(X + W - 2 * ε),
+        q(Y + 2 * ε),
+        "z",
+        "M",  ################
+        q(X + 3 * ε),
+        q(Y + 3 * ε),
+        "L",
+        q(X + W - 3 * ε),
+        q(Y + 3 * ε),
+        "L",
+        q(X + W - 3 * ε),
+        q(Y + H - 3 * ε),
+        "L",
+        q(X + 3 * ε),
+        q(Y + H - 3 * ε),
+        "z",
+    ]
 
 
 def main():
-    summary = svgwrite.Drawing(
-        filename="00_summary.svg",
+    W = sheet_w
+    H = body_h + 3 * margin_kiss_to_die
+    plot = svgwrite.Drawing(
+        filename="upload_this_to_cricut_maker.svg",
         size=(
-            q(210 * mm),
-            # q(305 * mm),
-            q(body_h + 3 * margin_kiss_to_die),
+            f"{convert_to(W / mm, 1).evalf()}mm",
+            f"{convert_to(H / mm, 1).evalf()}mm",
         ),
+        # viewBox=f"0 0 {(W / mm).evalf()} {(H / mm).evalf()}",
     )
-    style_kiss_cut = {
-        "fill": "none",
-        "stroke": "black",
-        "stroke_dasharray": "1",
-        "stroke_width": 1,
-    }
-    style_die_cut = {
-        "fill": "none",
-        "stroke": "black",
-        "stroke_width": 1,
-    }
     delta = 3 * margin_kiss_to_die + 2 * body_w
     sierra = 0 * mm
     while sierra + delta <= sheet_w:
-        summary.add(
-            summary.circle(
-                center=(
-                    q(margin_kiss_to_die + body_w / 2 + sierra),
-                    q(margin_kiss_to_die + touchhole_h),
-                ),
-                r=q(touchhole_d / 2),
-                **style_kiss_cut,
-            )
-        )
-        summary.add(
-            summary.circle(
-                center=(
-                    q(margin_kiss_to_die + body_w / 2 + sierra),
-                    q(margin_kiss_to_die + keyhole_h),
-                ),
-                r=q(keyhole_d / 2),
-                **style_kiss_cut,
-            )
-        )
-        summary.add(
-            summary.rect(
-                insert=(
-                    q(margin_kiss_to_die + sierra),
-                    q(margin_kiss_to_die),
-                ),
-                size=(q(body_w), q(body_h)),
-                rx=q(body_r),
-                ry=q(body_r),
-                **style_kiss_cut,
-            )
-        )
-        summary.add(
-            summary.circle(
-                center=(
-                    q(2 * margin_kiss_to_die + 3 * body_w / 2 + sierra),
-                    q(margin_kiss_to_die + keyhole_h),
-                ),
-                r=q(keyhole_d / 2),
-                **style_kiss_cut,
-            )
-        )
-        summary.add(
-            summary.rect(
-                insert=(
-                    q(2 * margin_kiss_to_die + body_w + sierra),
-                    q(margin_kiss_to_die),
-                ),
-                size=(q(body_w), q(body_h)),
-                rx=q(body_r),
-                ry=q(body_r),
-                **style_kiss_cut,
-            )
-        )
-        summary.add(
-            summary.line(
-                start=(
-                    q(3 * margin_kiss_to_die + 2 * body_w + sierra),
-                    q(2 * margin_kiss_to_die + body_h),
-                ),
-                end=(
-                    q(3 * margin_kiss_to_die + 2 * body_w + sierra),
-                    q(0 * mm),
-                ),
-                **style_die_cut,
+        plot.add(
+            plot.path(
+                d=body(
+                    X=margin_kiss_to_die + sierra,
+                    Y=margin_kiss_to_die,
+                )
+                + keyhole(
+                    X=margin_kiss_to_die + body_w / 2 + sierra,
+                    Y=margin_kiss_to_die + keyhole_h,
+                )
+                + touchhole(
+                    X=margin_kiss_to_die + body_w / 2 + sierra,
+                    Y=margin_kiss_to_die + touchhole_h,
+                )
+                + body(
+                    X=body_w + 2 * margin_kiss_to_die + sierra,
+                    Y=margin_kiss_to_die,
+                )
+                + keyhole(
+                    X=2 * margin_kiss_to_die + 3 * body_w / 2 + sierra,
+                    Y=margin_kiss_to_die + keyhole_h,
+                )
+                + die_cut(X=sierra, Y=0),
+                fill="#808080",
+                fill_opacity=0.5,
+                stroke="black",
+                stroke_width=0.1,
             )
         )
         sierra += delta
-    summary.add(
-        summary.line(
-            start=(
-                q(0 * mm),
-                q(2 * margin_kiss_to_die + body_h),
-            ),
-            end=(
-                q(sheet_w),
-                q(2 * margin_kiss_to_die + body_h),
-            ),
-            **style_die_cut,
-        )
-    )
-    summary.save()
+    plot.save()
+    print(f"expected import size: {sierra} × {H}")
+    return
 
 
 if __name__ == "__main__":
