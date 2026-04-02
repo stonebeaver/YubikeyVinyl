@@ -1,13 +1,13 @@
 # Yubikey Vinyl
 
-Cut stickers for a more colorful appearance of your Yubikeys
+Cut stickers for a more colorful appearance of your YubiKey 5 NFC and YubiKey 5C NFC
 
 
 ## Getting Started for End Users ✂️
 
 1. Upload the file *upload_this_to_cricut_maker.svg* to Cricut Maker
 2. Use shape with your plotter (see [Compatibility Matrix](#compatibility-matrix-))
-3. Use die-cut patches for transport or storage
+3. Use die-cut patches for transport and storage
 4. Transfer kiss-cut patches to clean and dust-free surface
 5. Enjoy the dopamine
 
