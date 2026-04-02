@@ -7,9 +7,12 @@ pt = inch / 72
 
 ## parameters
 
+sheet_h = (
+    12 * inch - inch / 2
+)  # cricut claims that they would sell you 12 inches of workspace and material. but they never let you plot inside a qaurter margin border on both sides.
 sheet_w = (
     12 * inch - inch / 2
-)  # they claim that they would sell you 12 inches but never let you plot inside a qaurter margin border on both sides
+)  # cricut claims that they would sell you 12 inches of workspace and material. but they never let you plot inside a qaurter margin border on both sides.
 body_h = 31 * mm
 body_w = 16 * mm
 body_r = 1 * mm
@@ -23,6 +26,9 @@ margin_kiss_to_die = sympy.Rational("1.5") * mm
 
 sheet_w = convert_to(
     sheet_w, mm
+)  # optimizes calculation speed when we force that up front
+sheet_h = convert_to(
+    sheet_h, mm
 )  # optimizes calculation speed when we force that up front
 
 
@@ -226,46 +232,50 @@ def die_cut_vertical(X, Y):
 
 
 def main():
-    W = sheet_w
-    H = body_h + 3 * margin_kiss_to_die
+    step_x = 3 * margin_kiss_to_die + 2 * body_w
+    step_y = body_h + 2 * margin_kiss_to_die
+
+    path = list()
+    iterator_y = 0 * mm
+    while iterator_y + step_y <= sheet_h:
+        iterator_x = 0 * mm
+        path += die_cut_horizontal(X=iterator_x, Y=iterator_y)
+        while iterator_x + step_x <= sheet_w:
+            path += (
+                body(
+                    X=margin_kiss_to_die + iterator_x,
+                    Y=margin_kiss_to_die + iterator_y,
+                )
+                + keyhole(
+                    X=margin_kiss_to_die + body_w / 2 + iterator_x,
+                    Y=margin_kiss_to_die + keyhole_h + iterator_y,
+                )
+                + touchhole(
+                    X=margin_kiss_to_die + body_w / 2 + iterator_x,
+                    Y=margin_kiss_to_die + touchhole_h + iterator_y,
+                )
+                + body(
+                    X=body_w + 2 * margin_kiss_to_die + iterator_x,
+                    Y=margin_kiss_to_die + iterator_y,
+                )
+                + keyhole(
+                    X=2 * margin_kiss_to_die + 3 * body_w / 2 + iterator_x,
+                    Y=margin_kiss_to_die + keyhole_h + iterator_y,
+                )
+                + die_cut_vertical(X=iterator_x, Y=iterator_y)
+            )
+            iterator_x += step_x
+        path += die_cut_vertical(X=iterator_x, Y=iterator_y)
+        iterator_y += step_y
+    path += die_cut_horizontal(X=0, Y=iterator_y)
+
     plot = svgwrite.Drawing(
         filename="upload_this_to_cricut_maker.svg",
         size=(
-            f"{convert_to(W / mm, 1).evalf()}mm",
-            f"{convert_to(H / mm, 1).evalf()}mm",
+            f"{convert_to(sheet_w / mm, 1).evalf()}mm",
+            f"{convert_to(sheet_h / mm, 1).evalf()}mm",
         ),
     )
-    delta = 3 * margin_kiss_to_die + 2 * body_w
-    sierra = 0 * mm
-    path = list()
-    path += die_cut_horizontal(X=0, Y=0)
-    while sierra + delta <= sheet_w:
-        path += (
-            body(
-                X=margin_kiss_to_die + sierra,
-                Y=margin_kiss_to_die,
-            )
-            + keyhole(
-                X=margin_kiss_to_die + body_w / 2 + sierra,
-                Y=margin_kiss_to_die + keyhole_h,
-            )
-            + touchhole(
-                X=margin_kiss_to_die + body_w / 2 + sierra,
-                Y=margin_kiss_to_die + touchhole_h,
-            )
-            + body(
-                X=body_w + 2 * margin_kiss_to_die + sierra,
-                Y=margin_kiss_to_die,
-            )
-            + keyhole(
-                X=2 * margin_kiss_to_die + 3 * body_w / 2 + sierra,
-                Y=margin_kiss_to_die + keyhole_h,
-            )
-            + die_cut_vertical(X=sierra, Y=0)
-        )
-        sierra += delta
-    path += die_cut_vertical(X=sierra, Y=0)
-    path += die_cut_horizontal(X=0, Y=body_h + 2 * margin_kiss_to_die)
     plot.add(
         plot.path(
             d=path,
@@ -276,8 +286,8 @@ def main():
         )
     )
     plot.save()
-    print(f"expected import size: {sierra.evalf()} × {H.evalf()}")
-    return
+    print(f"expected plot size {iterator_x.evalf()} × {iterator_y.evalf()}")
+    print(f"on a sheet of {sheet_w.evalf()} × {sheet_h.evalf()}")
 
 
 if __name__ == "__main__":

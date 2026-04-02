@@ -64,8 +64,8 @@ You used another device or material for you stickers? [Let us know!](https://git
 - stripe-type stickers ✅
 - wrap-type sticker
 - seamless columns ✅
-- seamless rows
+- seamless rows ✅
 - end-user-friendly access to number of rows and columns
-- report more working materials
+- more working materials?
 - other devices?
 - [\[room for your idea right here\]](https://github.com/stonebeaver/YubikeyVinyl/issues/new)
