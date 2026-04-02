@@ -5,7 +5,7 @@ Cut stickers for a more colorful appearance of your YubiKey 5 NFC and YubiKey�
 
 ## Getting Started for End Users ✂️
 
-1. Upload the file *upload_this_to_cricut_maker.svg* to Cricut Maker
+1. Upload the file *[upload_this_to_cricut_maker.svg](https://github.com/stonebeaver/YubikeyVinyl/blob/master/upload_this_to_cricut_maker.svg)* to Cricut Maker
 2. Use shape with your plotter (see [Compatibility Matrix](#compatibility-matrix-))
 3. Use die-cut patches for transport and storage
 4. Transfer kiss-cut patches to clean and dust-free surface
