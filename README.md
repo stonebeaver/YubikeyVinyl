@@ -24,11 +24,11 @@ Cut stickers for a more colorful appearance of your YubiKey 5 NFC and YubiKey�
     <th style="writing-mode: vertical-rl; transform: rotate(180deg);">Cricut Maker 3<br/>w/ fine point blade</th>
   </tr>
   <tr>
-    <td>rainbow vinyl<br/>Item #2010886<br/>EAN 09357342451</td>
+    <td>Cricut Value Vinyl<br/>Item #2010886<br/>EAN 09357342451</td>
     <td style="text-align:center;">✅</td>
   </tr>
   <tr>
-    <td>holographic vinyl<br/>Item #2012348<br/>EAN 093573415340</td>
+    <td>Cricut Holographic Vinyl<br/>Item #2012348<br/>EAN 093573415340</td>
     <td style="text-align:center;">✅</td>
   </tr>
 </table>
