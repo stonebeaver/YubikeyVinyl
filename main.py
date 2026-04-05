@@ -21,6 +21,7 @@ keyhole_d = sympy.Rational("5.5") * mm
 touchhole_h = 13 * mm
 touchhole_d = sympy.Rational("10.5") * mm
 margin_kiss_to_die = sympy.Rational("1.5") * mm
+die_cut_factor = 8
 ε = mm / 100
 
 
@@ -142,93 +143,41 @@ def touchhole(X, Y):
     ]
 
 
-def die_cut_half(X, Y):
-    W = 2 * body_w + 3 * margin_kiss_to_die
-    H = body_h + 2 * margin_kiss_to_die
-    return [
-        "M",
-        q(W + X),
-        q(H),
-        "l",
-        q(-W),
-        0,
-        "l",
-        0,
-        q(-ε),
-        "l",
-        q(W - ε),
-        0,
-        "l",
-        0,
-        q(-H + ε),
-        "l",
-        q(ε),
-        0,
-        "z",
-    ]
-
-
 def die_cut_horizontal(X, Y):
-    return [
-        "M",
-        q(X),
-        q(Y + 0 * ε),
-        "L",
-        q(X + sheet_w),
-        q(Y + 0 * ε),
-        "L",
-        q(X + sheet_w),
-        q(Y + 1 * ε),
-        "L",
-        q(X),
-        q(Y + 1 * ε),
-        "z",
-        "M",
-        q(X),
-        q(Y + 2 * ε),
-        "L",
-        q(X + sheet_w),
-        q(Y + 2 * ε),
-        "L",
-        q(X + sheet_w),
-        q(Y + 3 * ε),
-        "L",
-        q(X),
-        q(Y + 3 * ε),
-        "z",
-    ]
+    path = list()
+    for i in range(die_cut_factor):
+        path.extend(
+            [
+                "L",
+                q(X + ((i + 0) % 2) * sheet_w),
+                q(Y + i * ε),
+                "L",
+                q(X + ((i + 1) % 2) * sheet_w),
+                q(Y + i * ε),
+            ]
+        )
+    path[0] = "M"
+    path.append("z")
+    return path
 
 
 def die_cut_vertical(X, Y):
     H = body_h + 2 * margin_kiss_to_die
-    return [
-        "M",
-        q(X + 0 * ε),
-        q(Y + 5 * ε),
-        "L",
-        q(X + 0 * ε),
-        q(Y + H),
-        "L",
-        q(X + 1 * ε),
-        q(Y + H),
-        "L",
-        q(X + 1 * ε),
-        q(Y + 5 * ε),
-        "z",
-        "M",
-        q(X + 2 * ε),
-        q(Y + 5 * ε),
-        "L",
-        q(X + 2 * ε),
-        q(Y + H),
-        "L",
-        q(X + 3 * ε),
-        q(Y + H),
-        "L",
-        q(X + 3 * ε),
-        q(Y + 5 * ε),
-        "z",
-    ]
+    path = list()
+    for i in range(die_cut_factor):
+        path.extend(
+            [
+                "L",
+                q(X + i * ε),
+                q(Y + ((i + 0) % 2) * H),
+                "L",
+                q(X + i * ε),
+                q(Y + ((i + 1) % 2) * H),
+            ]
+        )
+    path[0] = "M"
+    path.append("z")
+    return path
 
 
 def main():
